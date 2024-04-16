@@ -13,6 +13,5 @@ fastq_file=$1
 output_dir=$2
 
 # Run fastqc: fastqc <input> -o <output>
-echo "Starting fastqc analysis"
 fastqc "$fastq_file" -o "$output_dir"
 

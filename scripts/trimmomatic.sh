@@ -14,17 +14,17 @@ R1=$1
 output_dir=$2
 
 # Find R2 from R1
-R2=${R1/_R1/R2}
+R2=${R1/_R1/_R2}
 
 # Define basename
-n1=$(basename "$R1" _R1.fastq)
-n2=$(basename "$R2" _R2.fastq)
+n1=$(basename "$R1" .fastq)
+n2=$(basename "$R2" .fastq)
 
 # Run trimmomatic
 java -jar $TRIMMOMATIC PE -phred33 \
 "$R1" "$R2" \
 "$output_dir"/"$n1"_paired1.fastq \
-"$output_dir"/"$n1"_unpaired2.fastq \
-"$output_dir"/"$n2"_paired2.fastq
+"$output_dir"/"$n1"_unpaired1.fastq \
+"$output_dir"/"$n2"_paired2.fastq \
 "$output_dir"/"$n2"_unpaired2.fastq \
 ILLUMINACLIP:/fs/ess/PAS1568/Taylor/BacterialSpot/NexteraPE-PE.fa:2:30:10 LEADING:10 TRAILING:2 SLIDINGWINDOW:4:15 MINLEN:36
