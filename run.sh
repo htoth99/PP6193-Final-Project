@@ -23,7 +23,7 @@ mv fastqc-* scripts/logs
 output_trim=results/trim
 
 # Run trimmomatic
-for R1_t in "$input_fastqc"/*fastq; do
+for R1_t in "$input_fastqc"/*.fastq; do
 	sbatch scripts/trimmomatic.sh "$R1_t" "$output_trim"
 done
 
@@ -42,7 +42,7 @@ for f in results/trim/*.fastq;do mv "$f" "${f/_paired2./.}";done
 # Metaspades directory
 output_metaspades=results/metaspades
 
-for R1_a in "$output_trim"/*.fastq; do
+for R1_a in "$output_trim"/*_R1.fastq; do
 	sbatch scripts/metaspades.sh "$R1_a" "$output_metaspades"
 done
 # Before running next step, move log files to log directory

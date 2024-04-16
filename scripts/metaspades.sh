@@ -2,7 +2,7 @@
 #SBATCH --job-name=metaspades
 #SBATCH -A PAS2700
 #SBATCH --time=20:00:00
-#SBATCH --mem=250GB
+#SBATCH --mem=40GB
 #SBATCH --out=metaspades-%j.out
 
 set -euo pipefail
@@ -18,7 +18,7 @@ R1=$1
 output_dir=$2
 
 # Infer R2
-R2=${R1/_R1/_R2}
+R2=$(echo "$R1" | sed -e "s/_R1/_R2/")
 
 # Run metaspades
 python spades.py \
