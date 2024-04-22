@@ -15,3 +15,6 @@ output_dir=$2
 # Run fastqc: fastqc <input> -o <output>
 fastqc "$fastq_file" -o "$output_dir"
 
+todays_date=$(date +%D)
+
+echo "This analysis was run on $todays_date"

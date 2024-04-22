@@ -1,0 +1,12 @@
+TrimmomaticPE: Started with arguments:
+ -phred33 rawdata/PDMG-52_R1.fastq rawdata/PDMG-52_R2.fastq results/trim/PDMG-52_R1_paired1.fastq results/trim/PDMG-52_R1_unpaired1.fastq results/trim/PDMG-52_R2_paired2.fastq results/trim/PDMG-52_R2_unpaired2.fastq ILLUMINACLIP:/fs/ess/PAS1568/Taylor/BacterialSpot/NexteraPE-PE.fa:2:30:10 LEADING:10 TRAILING:2 SLIDINGWINDOW:4:15 MINLEN:36
+Multiple cores found: Using 3 threads
+Using PrefixPair: 'AGATGTGTATAAGAGACAG' and 'AGATGTGTATAAGAGACAG'
+Using Long Clipping Sequence: 'GTCTCGTGGGCTCGGAGATGTGTATAAGAGACAG'
+Using Long Clipping Sequence: 'TCGTCGGCAGCGTCAGATGTGTATAAGAGACAG'
+Using Long Clipping Sequence: 'CTGTCTCTTATACACATCTCCGAGCCCACGAGAC'
+Using Long Clipping Sequence: 'CTGTCTCTTATACACATCTGACGCTGCCGACGA'
+ILLUMINACLIP: Using 1 prefix pairs, 4 forward/reverse sequences, 0 forward only sequences, 0 reverse only sequences
+Input Read Pairs: 40948391 Both Surviving: 39736474 (97.04%) Forward Only Surviving: 362695 (0.89%) Reverse Only Surviving: 64827 (0.16%) Dropped: 784395 (1.92%)
+TrimmomaticPE: Completed successfully
+This analysis was run on 04/20/24

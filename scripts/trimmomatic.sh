@@ -10,22 +10,24 @@
 module load trimmomatic/0.38
 
 # Load bash variables
-R1=$1
+R1_in=$1
 output_dir=$2
 
 # Find R2 from R1
-R2=$(echo $R1 | sed -e "s/_R1/_R2/")
+R2_in=$(echo $R1_in | sed -e "s/_R1/_R2/")
 
 # Define basename
-n1=$(basename "$R1" .fastq)
-n2=$(basename "$R2" .fastq)
+n1=$(basename "$R1_in" .fastq)
+n2=$(basename "$R2_in" .fastq)
 
 # Run trimmomatic
 java -jar $TRIMMOMATIC PE -phred33 \
-"$R1" "$R2" \
+"$R1_in" "$R2_in" \
 "$output_dir"/"$n1"_paired1.fastq \
 "$output_dir"/"$n1"_unpaired1.fastq \
 "$output_dir"/"$n2"_paired2.fastq \
 "$output_dir"/"$n2"_unpaired2.fastq \
 ILLUMINACLIP:/fs/ess/PAS1568/Taylor/BacterialSpot/NexteraPE-PE.fa:2:30:10 LEADING:10 TRAILING:2 SLIDINGWINDOW:4:15 MINLEN:36
 
+todays_date=$(date +%D)
+echo "This analysis was run on $todays_date"

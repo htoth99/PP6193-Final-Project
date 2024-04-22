@@ -13,23 +13,29 @@ module load samtools/1.16.1
 
 # Set bash variables
 contigs=$1
-read1=$2
-aln_sam=$3
-aln_bam=$4
-sorted_bam=$5
+R1_in=$2
+bwa_outdir=$3
 
 # Infer R2
-read2=${R1/_R1/_R2}
+R2_in=$(echo $R1_in | sed -e "s/_R1/_R2/")
 
-# First, indext the contigs from the assembly
+# File basename
+N=$(basename "$R1_in" .fastq)
+
+# First, index the contigs from the assembly
 bwa index "$contigs"
 
 # Next, align the pair-end sequences back to the indexed genome
 bwa mem -t 16 -a "$contigs" \
-"$read1" "$read2" > "$aln_sam"
+"$R1_in" "$R2_in" > "$bwa_outdir"/"$N"_aln_sam.sam
 
 # Make a bam file from the alignment using samtools
-samtools view -b -S "$aln_sam" > "$aln_bam"
+samtools view -b -S "$bwa_outdir"/"$N"_aln_sam.sam > "$bwa_outdir"/"$N"_aln_bam.bam
 
 # Lastly, sort the bam file since many binners need sorted bam files
-samtools sort -o "$aln_bam" "$sorted_bam"
+samtools sort -o "$bwa_outdir"/"$N"_aln_bam.bam "$bwa_outdir"/"$N"_sorted_bam.bam
+
+# Remove files - aligning creates massive files that aren't needed
+rm "$bwa_outdir"/"$N"_aln_sam.sam "$bwa_outdir"/"$N"_aln_bam.bam
+
+
