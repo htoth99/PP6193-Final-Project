@@ -1,12 +1,10 @@
-# shellcheck disable=SC2148
 # This is a runner script for my final project in PP6193
+# Created by Hannah Toth
 # It is designed to be a workflow for an assembly-first MGS approach
 # This workflow contains 5 steps - please refer to the README.md and USAGE.md for more details
 # Copy and paste each section into the terminal to run each step
 
-sample_name=PDMG-52
-
-### Step 1: Run fastqc in a loop
+### Step 1: Run fastqc in a loop ###
 # Define fastqc directories
 input_fastqc=rawdata
 output_fastqc=results/fastqc
@@ -16,19 +14,20 @@ for file in "$input_fastqc"/*.fastq; do
 	sbatch scripts/fastqc.sh "$file" "$output_fastqc"
 done
 # Before running next step, move log files to log directory
-mv fastqc-* scripts/logs
+mv fastqc-* results/logs
 
-### Step 2: Run trimmommatic in a loop
+### Step 2: Run trimmommatic in a loop ###
 # Define trimmomatic directories
+input_fastqc=rawdata
 output_trim=results/trim
 
 # Run trimmomatic
-for R1_t in "$input_fastqc"/*.fastq; do
+for R1_t in "$input_fastqc"/*_R1.fastq; do
 	sbatch scripts/trimmomatic.sh "$R1_t" "$output_trim"
 done
 
 # Before running next step, move log files to log directory
-mv trimmomatic-* scripts/logs
+mv trimmomatic-* results/logs
 
 # After trimming, we need to...
 # Delete unpaired files
@@ -38,25 +37,66 @@ rm results/trim/*_unpaired2.fastq
 for f in results/trim/*.fastq;do mv "$f" "${f/_paired1./.}";done
 for f in results/trim/*.fastq;do mv "$f" "${f/_paired2./.}";done
 
-### Step 3: Assembling the genome using metaspades
-# Metaspades directory
-output_metaspades=results/metaspades
+### Step 3: Assembling the genome using metaspades ###
+# Metaspades directories
+# Work around coding because SPAdes needs to run in its own directory!
+root_dir=$(pwd)
+input_metaspades="$root_dir"/results/trim
+output_metaspades="$root_dir"/results/metaspades
 
-for R1_a in "$output_trim"/*_R1.fastq; do
-	sbatch scripts/metaspades.sh "$R1_a" "$output_metaspades"
+for R1_a in "$input_metaspades"/*_R1.fastq; do
+	file_name=$(basename "$R1_a" .fastq)
+	mkdir -p "$output_metaspades"/"$file_name"
+	sbatch scripts/metaspades.sh "$R1_a" "$output_metaspades"/"$file_name"
 done
+
+# SPAdes will name generically, so we should rename and move assembleed contigs to another directory
+cd results/metaspades
+mkdir fastas
+for f in **/contigs.fasta; do newf=$(dirname "$f"); mv $f fastas/$newf.fasta;done
+cd ../..
+
 # Before running next step, move log files to log directory
-mv metaspades-* scripts/logs
+mv metaspades-* results/logs
 
-# After assembling genome, rename the "contigs.fasta" to the actual name
-mv results/metaspades/contigs.fasta results/metaspades/"$sample_name".fasta
-
-### Step 4: Read mapping - lots of steps to this one!
+### Step 4: Read mapping - lots of steps to this one! ###
+# Read mapping is only required for metabat2
+# Define read mapping directories
 readmap_dir=results/read_map
+assemblies_dir=results/metaspades/fastas
+output_trim=results/trim
 
-sbatch scripts/bwa.sh "$sample_name" "<enter R1 here>" "$readmap_dir"/aln_sam "$readmap_dir"/aln_bam "$readmap_dir"/sorted_bam
+for file in "$assemblies_dir"/*.fasta; do
+	name=$(basename "$file" .fasta)
+	sbatch scripts/bwa.sh "$file" "$output_trim"/"$name"_R1.fastq "$readmap_dir"
+done
+
 # Before running next step, move log files to log directory
-mv bwa-* scripts/logs
+mv bwa-* results/logs
 
-### Step 5: Binning
+### Step 5: Binning ###
+# When using metabat2, we need a)contigs and b)sorted bam file
+# Define metabat2 and maxbin2 directories
+readmap_dir=results/read_map
+assemblies_dir=results/metaspades/fastas
+metabat_out=results/binning/metabat2
+output_trim=results/trim
+maxbin_out=results/binning/maxbin2/
+
+#jgi_summarize_bam_contig_depths -outputDepth "$output"/"$N"_depth.txt $bam_file
+
+# Run metabat2
+for file in "$assemblies_dir"/*.fasta; do
+	name=$(basename "$file" .fasta)
+	sbatch scripts/metabat2.sh "$file" "$metabat_out"/"$name"
+done
+
+# Or run maxbin2
+for file in "$assemblies_dir"/*.fasta; do
+	name=$(basename "$file" .fasta)
+	sbatch scripts/maxbin2.sh "$file" "$output_trim"/"$name"_R1.fastq "$maxbin_out"/"$name"
+done
+
+# Move log file to log directory
+mv metabat2-* results/logs
 
