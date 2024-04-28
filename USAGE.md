@@ -1,6 +1,6 @@
 # Metagenomic workflow usage guide
 ### Created by Hannah Toth
-This workflow is for use on the Ohio Supercomputer.
+This workflow is for use on the Ohio Supercomputer. Please read the entire document throughly before attempting any steps, as you need to edit some items, which is described below.
 ## What does this workflow include?
 There are **five** steps detailed in this workflow. They are:
 - quality assessment (fastqc)
@@ -50,27 +50,23 @@ Actions that should be copied and pasted together are grouped together in paragr
 3. If applicable, rename, move, or delete files
 4. Move log file to appropriate location
 
-## Do I need to edit any of the scripts?
-Yes, you will. First and foremost, you will need to edit each script for your funding source if running on the OSC.
-```bash
-#SBATCH -A <funding project>
-```
-Next, you may need to edit the time and memory for each script depending on your data size. The runner script is set up to run one job per sample (with the exception of fastqc and trimmomatic, where a job for each file is run).
-```bash
-#SBATCH --mem=<memoryGB or MB>
-#SBATCH --time=<00:00:00>
-```
-### Specific cases
-Trimmomatic has two different versions on the OSC. 0.36 is only on the Owens cluster, and 0.38 is only on the pitzer cluster. Be sure to change this before running on the appropriate cluster
-```bash
-module load trimmomatic/0.36
-module load trimmomatic/0.38
-```
-An envrionment is required for metabat2. My envrionment for metabat2 is named "metabat2" and I activate my envrionment through mamba, as seen in the script. It can alternatively be activated through conda. To install, use the following commands:
+## Editing scripts and installation of software
+This workflow was created so users do not need to create or edit scripts. There are a few exceptions to this concept, and they are described below. *These changes are needed in order for the workflow to work*
+
+## What do I need to install?
+An envrionment is required for metabat2 and maxbin2. My envrionment for metabat2 is named "metabat2" and I activate my envrionment through mamba, as seen in the script. My maxbin2 envrionment follows the same format and activation as metabat2. They can alternatively be activated through conda rather than mamba.
+<br>
+**Metbat2 installation**
 ```bash
 conda create -n metabat2
 conda activate metabat2
 conda install bioconda::metabat2
+```
+**Maxbin2 installation**
+```bash
+conda create -n maxbin2
+conda activate maxbin2
+conda install bioconda::maxbin2
 ```
 SPAdes is downloaded to a scratch folder of mine. I recommend you put SPAdes in a scratch folder as well, as it can be reinstalled easily, and is prone to core dump if it is having issues.
 To install, navigate to the directory where you would like to install SPAdes and do the following:
@@ -81,8 +77,24 @@ cd SPAdes-3.15.5-Linux/bin/
 ```
 After installation, change the path in the metaspades.sh script to where your SPAdes bin directory is located.
 
-## What about the runner script?
-Nope! It should be fine how it is. Just ensure that your runner script is in the root directory and the rest of the project is set up as decsrcibed above.
+## What do I need to edit?
+### SBATCH lines in each script
+You will need to edit the **funding source** and the **time** and **mem** for each script just one time. You may need to adjust the time and memory for smaller or larger projects in the future. Please change the following lines in each script:
+```bash
+#SBATCH -A <funding project>
+#SBATCH --mem=<memoryGB or MB>
+#SBATCH --time=<00:00:00>
+```
+### trimmomatic.sh
+Trimmomatic has two different versions on the OSC. 0.36 is only on the Owens cluster, and 0.38 is only on the pitzer cluster. Be sure to change this in the *trimmomatic.sh* script located in scripts/ before running on the appropriate cluster.
+```bash
+module load trimmomatic/0.36
+module load trimmomatic/0.38
+```
+### metaspades.sh
+After spades installation, change the path in the *metaspades.sh* script, located in scripts/ and change line 27 to your spades location. 
+
+# FAQ
 
 ## There's 2 binning programs, do I need to run both?
 No, you do not need to run both. You just need to run one. I like both and I have not decided which one I will continue using.

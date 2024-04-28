@@ -1,3 +1,4 @@
+# shellcheck disable=SC2148
 # This is a runner script for my final project in PP6193
 # Created by Hannah Toth
 # It is designed to be a workflow for an assembly-first MGS approach
