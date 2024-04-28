@@ -34,7 +34,7 @@ Begin with a root directory. Within this directory, the following files and dire
 *   *run.sh*
 <br>
 <br>
-It's important to set up your project directory exactly as described above, as the runner script uses relative paths. If copying (using wget or curl) from github then the project will be set up for you. The raw data directory will be empty for you to fill with your own raw data. **The runner script will not work if the project is not set up exactly like this.**
+It's important to set up your project directory exactly as described above, as the runner script uses relative paths. If downloading from github, then the results and rawdata directories and subdirectories must be made manually. This is detailed in the runner script but commented out. Fill the rawdata directory with your raw, paired-end reads. **The runner script will not work if the project is not set up exactly like this.**
 
 ## How do I run each step?
 Each step has it's own script in the script directory of this project. However, they are run by copying and pasting the corresponding block from the **runner script**, which is located in the home directory. **Step 1 must come before step 2, and so on.**

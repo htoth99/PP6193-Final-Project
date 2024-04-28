@@ -5,6 +5,11 @@
 # This workflow contains 5 steps - please refer to the README.md and USAGE.md for more details
 # Copy and paste each section into the terminal to run each step
 
+### Setting up - only do this once ###
+#cd <ROOT DIR>
+#mkdir rawdata 
+#mkdir results/{fastqc,trim,metaspades,read_map,binning,logs}
+
 ### Step 1: Run fastqc in a loop ###
 # Define fastqc directories
 input_fastqc=rawdata

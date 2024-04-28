@@ -5,7 +5,7 @@ Hi Jelmer! This note is to help you understand everything that's in my project d
 1. Read submission note
 2. Read README.md again (changed it a bit from proposal)
 3. Read USAGE.md for instructions to run the entire workflow
-4. Create envrionments (detailed in USAGE.md) and copy data from location noted below
+4. Follow instructions for minor things to change or create in the workflow for individual use (changing paths, installing envrionments, creating one-time directories, etc.)
 5. Run workflow!
 
 ## Other important notes
@@ -21,3 +21,5 @@ I still haven't decided which binner I like the best. I need to do host removal 
 This workflow also does not include extensive error messaging/guiding. This is something I will continue to work on once I've established and utilized this pipeline across many samples. I also want to have others test it this out so I can see the error others may be encountering. Since the set up currently works for me, and is based on copying and pasting from the runner scripts, it was challenging for me to generate errors! Definitely something I want to introduce once I start handing this off to people.
 
 I'm planning on adding checkm and host removal to this workflow as well, but I need to figure out how to do host removal first. Coming soon for sure!
+
+Although this workflow is mostly flushed out, I'm not certain it would work for multiple samples. I'm currently in the process of trying multiple samples at the same time, so it's close!
